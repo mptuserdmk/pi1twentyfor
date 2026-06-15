@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Симулятор информационного пузыря — интерактивная демонстрация того, как алгоритмы соцсетей формируют вашу реальность">
+  <title>Bubble — Симулятор информационного пузыря</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══════════════════ ХЕДЕР ═══════════════════ -->
+    <header class="header" id="header">
+      <div class="header__left">
+        <span class="header__logo-icon">🫧</span>
+        <span class="header__logo-text">Bubble</span>
+        <span class="header__logo-sub">симулятор пузыря</span>
+      </div>
+      <div class="header__controls">
+        <button id="theme-toggle" class="btn btn--icon" title="Сменить тему" aria-label="Сменить тему">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button id="pop-bubble-btn" class="btn btn--pop" title="Взрыв пузыря — показать противоположные новости">
+          <span>💥</span> Взрыв пузыря
+        </button>
+        <button id="split-toggle-btn" class="btn btn--outline" title="Режим сравнения двух пользователей">
+          <span>⚖️</span> Сравнение
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ POP BUBBLE BANNER ═══════════════════ -->
+    <div id="pop-banner" class="pop-banner" style="display:none">
+      <p>💥 <strong>Режим «Взрыв пузыря»</strong> — алгоритм отключён, вы видите то, что он скрывал</p>
+      <button id="pop-close-btn" class="btn btn--small btn--light">✕ Вернуть алгоритм</button>
+    </div>
+
+    <!-- ═══════════════════ ОСНОВНОЙ МАКЕТ ═══════════════════ -->
+    <div class="layout" id="layout">
+
+      <!-- ── ПАНЕЛЬ МЕТРИК (слева) ── -->
+      <aside class="metrics" id="metrics-panel">
+        <h2 class="metrics__title">📊 Статистика пузыря</h2>
+
+        <!-- Эхо-камера -->
+        <section class="metrics__section">
+          <h3 class="metrics__heading">Эхо-камера</h3>
+          <div class="echo-meter">
+            <div class="echo-meter__track">
+              <div class="echo-meter__fill" id="echo-fill" style="width:0%"></div>
+            </div>
+            <div class="echo-meter__info">
+              <span class="echo-meter__value" id="echo-value">0%</span>
+              <span class="echo-meter__label" id="echo-label">Сбалансировано</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Распределение взглядов -->
+        <section class="metrics__section">
+          <h3 class="metrics__heading">Распределение взглядов</h3>
+          <div class="distribution" id="distribution-chart">
+            <!-- Генерируется в JS -->
+          </div>
+        </section>
+
+        <!-- Интересы по категориям -->
+        <section class="metrics__section">
+          <h3 class="metrics__heading">Интересы</h3>
+          <div class="interests" id="interests-chart">
+            <!-- Генерируется в JS -->
+          </div>
+        </section>
+
+        <!-- Счётчик взаимодействий -->
+        <section class="metrics__section">
+          <h3 class="metrics__heading">Активность</h3>
+          <div class="activity-stats" id="activity-stats">
+            <div class="activity-stat">
+              <span class="activity-stat__icon">👍</span>
+              <span class="activity-stat__count" id="stat-likes">0</span>
+            </div>
+            <div class="activity-stat">
+              <span class="activity-stat__icon">⏭️</span>
+              <span class="activity-stat__count" id="stat-skips">0</span>
+            </div>
+            <div class="activity-stat">
+              <span class="activity-stat__icon">👎</span>
+              <span class="activity-stat__count" id="stat-dislikes">0</span>
+            </div>
+          </div>
+        </section>
+
+        <button id="reset-btn" class="btn btn--danger btn--full">🔄 Сбросить профиль</button>
+      </aside>
+
+      <!-- ── ЛЕНТА НОВОСТЕЙ ── -->
+      <main class="feed" id="feed">
+        <div class="feed__header">
+          <h1 class="feed__title" id="feed-title">Ваша лента</h1>
+          <button id="refresh-btn" class="btn btn--small btn--accent">🔄 Обновить ленту</button>
+        </div>
+        <div class="feed__cards" id="feed-cards">
+          <!-- Карточки рендерятся в JS -->
+        </div>
+        <div class="feed__empty" id="feed-empty" style="display:none">
+          <div class="feed__empty-icon">📭</div>
+          <p>Вы просмотрели все новости!</p>
+          <button id="feed-reset-btn" class="btn btn--accent">Обновить ленту</button>
+        </div>
+      </main>
+
+      <!-- ── СПЛИТ-СКРИН (скрыт по умолчанию) ── -->
+      <aside class="split-panel" id="split-panel" style="display:none">
+        <div class="split-panel__header">
+          <h2 class="split-panel__title">👤 Альтернативная лента</h2>
+          <p class="split-panel__desc">Так выглядит лента без вашего пузыря</p>
+        </div>
+        <div class="split-panel__cards" id="split-cards">
+          <!-- Альтернативная лента -->
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ ТОСТ-УВЕДОМЛЕНИЯ ═══════════════════ -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
